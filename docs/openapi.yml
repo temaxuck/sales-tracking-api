@@ -139,6 +139,13 @@ components:
           type: string
         price:
           type: number
+    SaleItem:
+      type: object
+      properties:
+        product_id:
+          type: integer
+        quantity:
+          type: number
     Sale:
       type: object
       properties:
@@ -152,7 +159,7 @@ components:
         items:
           type: array
           items:
-            type: string
+            type: SaleItem
     Metrics:
       type: object
       properties:
