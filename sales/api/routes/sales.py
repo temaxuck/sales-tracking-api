@@ -20,7 +20,7 @@ class SalesView(BaseSaleView):
 
     MAX_SALES_PER_INSERT = MAX_QUERY_ARGS // len(sale_table.columns)
 
-    @docs(summary="Get a list of all products")
+    @docs(summary="Get a list of all sales")
     @response_schema(GetSaleResponseSchema(), code=HTTPStatus.OK.value)
     async def get(self):
         params = self.request.rel_url.query
