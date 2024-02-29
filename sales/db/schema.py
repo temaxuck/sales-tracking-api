@@ -6,6 +6,7 @@ from sqlalchemy import (
     Integer,
     ForeignKey,
     String,
+    Numeric,
     Date,
     Enum as pgEnum,
     ForeignKeyConstraint,
@@ -30,3 +31,28 @@ convention = {
 }
 
 metadata = MetaData(naming_convention=convention)
+
+sale_table = Table(
+    "sale",
+    metadata,
+    Column("sale_id", Integer, primary_key=True),
+    Column("date", Date, nullable=False),
+    Column("amount", Numeric, nullable=False),
+)
+
+product_table = Table(
+    "product",
+    metadata,
+    Column("product_id", Integer, primary_key=True),
+    Column("name", String, nullable=False),
+    Column("price", Numeric, nullable=False),
+)
+
+sale_item_table = Table(
+    "sale_item",
+    metadata,
+    Column("sales_id", Integer, ForeignKey("sales.sale_id"), primary_key=True),
+    Column("product_id", Integer, ForeignKey("products.product_id"), primary_key=True),
+    # Numeric for a case, when product is not discret
+    Column("quantity", Numeric, nullable=False),
+)
