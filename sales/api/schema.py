@@ -19,3 +19,7 @@ class ProductsSchema(Schema):
         required=True,
         validate=Length(max=Config.MAX_PRODUCT_INSTANCES_WITHIN_IMPORT),
     )
+
+
+class EmptyResponseSchema(Schema):
+    pass
