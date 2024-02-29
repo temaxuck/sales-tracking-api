@@ -16,13 +16,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Product"
     post:
-      summary: Record a new product
+      summary: Add a list of products
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Product"
+              type: array
+              items:
+                $ref: "#/components/schemas/Product"
       responses:
         "201":
           description: The created product
