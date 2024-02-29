@@ -37,6 +37,16 @@ class BaseView(web.View):
 
 
 class BaseSaleView(BaseView):
+
+    async def check_if_sale_exists(self, sale_id: int) -> None:
+        async with self.pg.acquire() as conn:
+            query = sale_table.select().where(sale_table.c.sale_id == sale_id)
+            result = await conn.execute(query)
+            sale = await result.fetchone()
+
+            if not sale:
+                raise web.HTTPNotFound
+
     async def get_product(self, product_id: int, conn: SAConnection) -> float:
         query = product_table.select().where(product_table.c.product_id == product_id)
         result = await conn.execute(query)
@@ -48,7 +58,7 @@ class BaseSaleView(BaseView):
         return product
 
     @classmethod
-    def convert_client_date(cls, date: date) -> datetime:
+    def convert_client_date(self, date: date) -> datetime:
         try:
             return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
         except ValueError:
@@ -68,12 +78,13 @@ class BaseSaleView(BaseView):
 
                 for item in data.get("items"):
                     product = await self.get_product(item.get("product_id"), conn)
-                    amount += product.price * item.get("quantity")
+
+                    amount += product.get("price") * Decimal(item.get("quantity"))
 
                     query = sale_item_table.insert().values(
                         {
                             "sale_id": sale_id,
-                            "product_id": product.product_id,
+                            "product_id": product.get("product_id"),
                             "quantity": item.get("quantity"),
                         }
                     )
