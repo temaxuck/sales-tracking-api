@@ -37,7 +37,7 @@ class SalesView(BaseSaleView):
         summary="Record a new sale",
         responses={
             404: {
-                "description": "There is a product_id of a product that does not exist"
+                "description": "In items there is a product_id of a product that does not exist"
             }
         },
     )
@@ -66,6 +66,6 @@ class SalesView(BaseSaleView):
             result = await conn.execute(query)
             sale_id = await result.scalar()
 
-        await self.update_sale(data, sale_id)
+        amount = await self.update_sale(data, sale_id)
 
-        return web.Response(status=HTTPStatus.CREATED)
+        return web.json_response(data={"amount": float(amount)})

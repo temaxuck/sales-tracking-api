@@ -50,7 +50,7 @@ class BaseSaleView(BaseView):
     def convert_client_date(cls, date: date) -> datetime:
         return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
 
-    async def update_sale(self, data: dict, sale_id: int) -> None:
+    async def update_sale(self, data: dict, sale_id: int) -> int:
         amount = 0
         async with self.pg.acquire() as conn:
             async with conn.begin() as _:
@@ -81,3 +81,5 @@ class BaseSaleView(BaseView):
                     )
                 )
                 await conn.execute(query)
+
+        return amount
