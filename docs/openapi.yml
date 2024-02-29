@@ -1,0 +1,164 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Advanced Sales Tracking API
+paths:
+  /products:
+    get:
+      summary: Get a list of all products
+      responses:
+        "200":
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      summary: Record a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        "201":
+          description: The created product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /sales:
+    get:
+      summary: Get a list of all sales
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: A list of sales
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Sale"
+    post:
+      summary: Record a new sale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Sale"
+      responses:
+        "201":
+          description: The created sale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+  /sales/{id}:
+    get:
+      summary: Get details about a sale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The sale details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+    put:
+      summary: Update a sale
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Sale"
+      responses:
+        "200":
+          description: The updated sale
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"
+  /sales/metrics:
+    get:
+      summary: Get sales metrics
+      parameters:
+        - name: start_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: The sales metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Metrics"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+    Sale:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        amount:
+          type: number
+        items:
+          type: array
+          items:
+            type: string
+    Metrics:
+      type: object
+      properties:
+        total_sales:
+          type: number
+        average_sale_amount:
+          type: number
+        sales_trends:
+          type: object
+          additionalProperties:
+            type: number
