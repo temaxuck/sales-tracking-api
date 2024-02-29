@@ -33,7 +33,7 @@ class Config:
 
     # validation variables
     DATE_FORMAT = "%d.%m.%Y"
-    MAX_CITIZEN_INSTANCES_WITHIN_IMPORT = 10_000
+    MAX_PRODUCT_INSTANCES_WITHIN_IMPORT = 10_000
 
 
 class DebugConfig(Config):
