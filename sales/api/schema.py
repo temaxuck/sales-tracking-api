@@ -57,6 +57,7 @@ class BaseSaleSchema(Schema):
 
 class SaleSchema(BaseSaleSchema):
     sale_id = Int(validate=Range(min=0), required=True)
+    amount = Float(validate=Range(min=0), required=True)
 
 
 class GetSaleResponseSchema(Schema):
