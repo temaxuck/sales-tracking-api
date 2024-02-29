@@ -30,6 +30,7 @@ def init_app(args: Namespace, cfg: Config) -> web.Application:
         middlewares=middlewares,
     )
     app["config"] = cfg
+    app["logger"] = logger
     app.cleanup_ctx.append(lambda _: setup_pg(app, args=args))
 
     # app.add_routes(routes)
