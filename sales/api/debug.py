@@ -23,7 +23,7 @@ cfg = DebugConfig()
 parser = get_arg_parser(cfg)
 args = parser.parse_args()
 
-set_logging(args.log_level, args.log_format)
+set_logging("debug", args.log_format)
 
 setproctitle(f"[Dev] {os.path.basename(sys.argv[0])}")
 
