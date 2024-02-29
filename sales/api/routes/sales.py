@@ -6,7 +6,7 @@ from sqlalchemy import and_, select
 from sales.api.schema import (
     BaseSaleSchema,
     GetSaleResponseSchema,
-    PostSaleResponseSchema,
+    SaleSchema,
 )
 from sales.api.middleware import format_http_error
 from sales.db.schema import sale_table, sale_item_table
@@ -84,7 +84,7 @@ class SalesView(BaseSaleView):
         },
     )
     @request_schema(BaseSaleSchema())
-    @response_schema(PostSaleResponseSchema(), code=HTTPStatus.CREATED.value)
+    @response_schema(SaleSchema(), code=HTTPStatus.CREATED.value)
     async def post(self):
         data = await self.request.json()
 
@@ -110,4 +110,4 @@ class SalesView(BaseSaleView):
 
         sale = await self.update_sale(data, sale_id)
 
-        return web.json_response(data={"sale": self.serialize_row(sale)})
+        return web.json_response(data=self.serialize_row(sale))

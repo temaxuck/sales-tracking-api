@@ -59,9 +59,5 @@ class SaleSchema(BaseSaleSchema):
     sale_id = Int(validate=Range(min=0), required=True)
 
 
-class PostSaleResponseSchema(Schema):
-    sale = Nested(SaleSchema, required=True)
-
-
 class GetSaleResponseSchema(Schema):
     sales = Nested(SaleSchema, many=True, required=True)
