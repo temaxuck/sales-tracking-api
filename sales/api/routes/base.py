@@ -89,4 +89,6 @@ class BaseSaleView(BaseView):
                 )
                 await conn.execute(query)
 
-        return amount
+        data.update({"sale_id": sale_id})
+        data.update({"amount": amount})
+        return data

@@ -108,6 +108,6 @@ class SalesView(BaseSaleView):
             result = await conn.execute(query)
             sale_id = await result.scalar()
 
-        amount = await self.update_sale(data, sale_id)
+        sale = await self.update_sale(data, sale_id)
 
-        return web.json_response(data={"amount": float(amount)})
+        return web.json_response(data={"sale": self.serialize_row(sale)})
