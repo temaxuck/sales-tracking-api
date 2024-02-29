@@ -21,5 +21,13 @@ class ProductsSchema(Schema):
     )
 
 
+class ProductsResponseSchema(Schema):
+    products = Nested(
+        ProductSchema,
+        many=True,
+        required=True,
+    )
+
+
 class EmptyResponseSchema(Schema):
     pass

@@ -4,11 +4,15 @@ from aiomisc import chunk_list
 from datetime import datetime, date
 from http import HTTPStatus
 from typing import Generator
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
-from sales.api.schema import ProductsSchema, EmptyResponseSchema
+from sales.api.schema import (
+    ProductsSchema,
+    EmptyResponseSchema,
+    ProductsResponseSchema,
+)
 from sales.db.schema import product_table
-from sales.utils.pg import MAX_QUERY_ARGS
+from sales.utils.pg import MAX_QUERY_ARGS, SelectQuery
 
 from .base import BaseView
 
@@ -29,6 +33,16 @@ class ProductsView(BaseView):
                 "name": product["name"],
                 "price": product["price"],
             }
+
+    @docs(summary="Get a list of all products")
+    @response_schema(ProductsResponseSchema(), code=HTTPStatus.OK.value)
+    async def get(self):
+        query = product_table.select()
+
+        async with self.pg.acquire() as conn:
+            data = [self.serialize_row(row) async for row in SelectQuery(query, conn)]
+
+        return web.json_response(data={"products": data})
 
     @docs(summary="Add a list of products")
     @request_schema(ProductsSchema())
