@@ -17,7 +17,7 @@ def convert(value: Any) -> Any:
 
 @convert.register(date)
 def convert_date(value: date) -> str:
-    return value.strftime(Config.BIRTH_DATE_FORMAT)
+    return value.strftime(Config.DATE_FORMAT)
 
 
 dumps = partial(json.dumps, default=convert, ensure_ascii=False)
