@@ -1,3 +1,7 @@
 from .products import ProductsView
+from .sales import SalesView
 
-ROUTES = (ProductsView,)
+ROUTES = (
+    ProductsView,
+    SalesView,
+)

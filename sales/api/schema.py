@@ -1,10 +1,14 @@
 from datetime import date
 
 from marshmallow import Schema, validates, ValidationError, validates_schema
-from marshmallow.fields import Str, Int, Float, Date, List, Nested
+from marshmallow.fields import Str, Int, Float, Date, List, Nested, Number
 from marshmallow.validate import Length, OneOf, Range
 
 from sales.config import Config
+
+
+class EmptyResponseSchema(Schema):
+    pass
 
 
 class ProductSchema(Schema):
@@ -29,5 +33,15 @@ class ProductsResponseSchema(Schema):
     )
 
 
-class EmptyResponseSchema(Schema):
-    pass
+class SaleItemsSchema(Schema):
+    product_id = Int(validate=Range(min=0), required=True)
+    quantity = Number(validate=Range(min=0), requred=True)
+
+
+class SaleSchema(Schema):
+    date = Date(format=Config.DATE_FORMAT, required=True)
+    items = Nested(SaleItemsSchema, many=True, required=True)
+
+
+class SaleResponseSchema(Schema):
+    amount = Float(validate=Range(min=0), required=True)
