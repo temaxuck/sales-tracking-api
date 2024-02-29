@@ -38,10 +38,30 @@ class SaleItemsSchema(Schema):
     quantity = Number(validate=Range(min=0), requred=True)
 
 
-class SaleSchema(Schema):
+class BaseSaleSchema(Schema):
     date = Date(format=Config.DATE_FORMAT, required=True)
     items = Nested(SaleItemsSchema, many=True, required=True)
 
+    # Not sure if I should validate it like this
+    # @validates_schema
+    # def validate_unique_products(self, data, **_):
+    #     products_ids = set()
+    #     for item in data.get("items"):
+    #         if item.get("product_id") in products_ids:
+    #             raise ValidationError(
+    #                 f"product_id {item.get("product_id")} is not unique. Please provide unique product per item."
+    #             )
 
-class SaleResponseSchema(Schema):
+    #         products_ids.add(item.get("product_id"))
+
+
+class SaleSchema(BaseSaleSchema):
+    sale_id = Int(validate=Range(min=0), required=True)
+
+
+class PostSaleResponseSchema(Schema):
     amount = Float(validate=Range(min=0), required=True)
+
+
+class GetSaleResponseSchema(Schema):
+    sales = Nested(SaleSchema, many=True, required=True)

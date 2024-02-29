@@ -10,6 +10,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from sales.db.schema import product_table, sale_table, sale_item_table
+from sales.api.middleware import format_http_error
 
 
 class BaseView(web.View):
@@ -48,7 +49,13 @@ class BaseSaleView(BaseView):
 
     @classmethod
     def convert_client_date(cls, date: date) -> datetime:
-        return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
+        try:
+            return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            raise format_http_error(
+                web.HTTPBadRequest,
+                "specified date parameter is not a valid date",
+            )
 
     async def update_sale(self, data: dict, sale_id: int) -> int:
         amount = 0
