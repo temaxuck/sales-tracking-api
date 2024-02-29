@@ -4,6 +4,7 @@ from aiohttp.web_exceptions import (
     HTTPException,
     HTTPBadRequest,
     HTTPInternalServerError,
+    HTTPMethodNotAllowed,
 )
 from aiohttp.web_middlewares import middleware
 from aiohttp.web_request import Request
@@ -45,6 +46,8 @@ def handle_validation_error(error: ValidationError, *_) -> HTTPException:
 async def error_middleware(request: Request, handler: Handler):
     try:
         return await handler(request)
+    except HTTPMethodNotAllowed as err:
+        raise err
     except HTTPException as err:
         if not isinstance(err.body, JsonPayload):
             err = format_http_error(err.__class__, err.text)
