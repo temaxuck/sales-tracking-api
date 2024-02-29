@@ -4,16 +4,16 @@ import sys
 from aiohttp import web
 from setproctitle import setproctitle
 
-from analyzer.api.app import init_app
-from analyzer.config import DebugConfig
-from analyzer.utils.argparse import get_arg_parser
-from analyzer.utils.logging import set_logging
+from sales.api.app import init_app
+from sales.config import DebugConfig
+from sales.utils.argparse import get_arg_parser
+from sales.utils.logging import set_logging
 
 
 def run_dev():
     import subprocess
 
-    subprocess.run(["adev", "runserver", "analyzer/api/debug.py"])
+    subprocess.run(["adev", "runserver", "sales/api/debug.py"])
 
 
 app = None
