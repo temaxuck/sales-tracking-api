@@ -1,0 +1,5 @@
+include README.rst
+include requirements*.txt
+include sales/alembic.ini
+include sales/utils/*
+include sales/db/*
