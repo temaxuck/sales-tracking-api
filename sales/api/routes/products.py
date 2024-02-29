@@ -1,10 +1,9 @@
 from aiohttp import web
 from aiohttp_apispec import docs, request_schema, response_schema
 from aiomisc import chunk_list
-from datetime import datetime, date
 from http import HTTPStatus
 from typing import Generator
-from sqlalchemy import insert, select
+from sqlalchemy import insert
 
 from sales.api.schema import (
     ProductsSchema,

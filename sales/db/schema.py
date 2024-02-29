@@ -48,7 +48,7 @@ product_table = Table(
 sale_item_table = Table(
     "sale_item",
     metadata,
-    Column("sales_id", Integer, ForeignKey("sale.sale_id"), primary_key=True),
+    Column("sale_id", Integer, ForeignKey("sale.sale_id"), primary_key=True),
     Column("product_id", Integer, ForeignKey("product.product_id"), primary_key=True),
     # Numeric for a case, when product is not discret
     Column("quantity", Numeric, nullable=False),
