@@ -1,24 +1,21 @@
 from aiohttp import web
 from aiohttp_apispec import docs, request_schema, response_schema
 from http import HTTPStatus
-from sqlalchemy import and_, select
+from sqlalchemy import select
 
 from sales.api.schema import (
     BaseSaleSchema,
     GetSaleResponseSchema,
     SaleSchema,
 )
-from sales.api.middleware import format_http_error
 from sales.db.schema import sale_table, sale_item_table
-from sales.utils.pg import MAX_QUERY_ARGS, SelectQuery
+from sales.utils.pg import SelectQuery
 
 from .base import BaseSaleView
 
 
 class SalesView(BaseSaleView):
     URL_PATH = r"/sales"
-
-    MAX_SALES_PER_INSERT = MAX_QUERY_ARGS // len(sale_table.columns)
 
     @docs(summary="Get a list of all sales")
     @response_schema(GetSaleResponseSchema(), code=HTTPStatus.OK.value)
@@ -29,28 +26,12 @@ class SalesView(BaseSaleView):
             params.get("end_date"),
         )
 
-        if end_date and not start_date:
-            raise format_http_error(
-                web.HTTPBadRequest,
-                "end_date parameter is specified but start_date is not.",
-            )
-
         async with self.pg.acquire() as conn:
-            query = sale_table.select()
-
-            if start_date:
-
-                start_date = self.convert_client_date(start_date)
-                if end_date:
-                    end_date = self.convert_client_date(end_date)
-                    query = query.where(
-                        and_(
-                            sale_table.c.date >= start_date,
-                            sale_table.c.date <= end_date,
-                        )
-                    )
-                else:
-                    query = query.where(sale_table.c.date >= start_date)
+            query = self.filter_select_query_by_date(
+                start_date,
+                end_date,
+                sale_table.select(),
+            )
 
             sales = [self.serialize_row(row) async for row in SelectQuery(query, conn)]
             for sale in sales:

@@ -1,8 +1,6 @@
-from datetime import date
-
-from marshmallow import Schema, validates, ValidationError, validates_schema
-from marshmallow.fields import Str, Int, Float, Date, List, Nested, Number
-from marshmallow.validate import Length, OneOf, Range
+from marshmallow import Schema
+from marshmallow.fields import Str, Int, Float, Date, Nested, Number, Dict
+from marshmallow.validate import Length, Range
 
 from sales.config import Config
 
@@ -62,3 +60,9 @@ class SaleSchema(BaseSaleSchema):
 
 class GetSaleResponseSchema(Schema):
     sales = Nested(SaleSchema, many=True, required=True)
+
+
+class MetricsSchema(Schema):
+    total_sales = Float(validate=Range(min=0), required=True)
+    average_sales = Float(validate=Range(min=0), required=True)
+    sales_trends = Dict(keys=Str(), values=Float(validate=Range(min=0)), required=True)

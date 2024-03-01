@@ -1,13 +1,12 @@
 from aiohttp import web
 from aiohttp_apispec import docs, request_schema, response_schema
 from http import HTTPStatus
-from sqlalchemy import and_, select
+from sqlalchemy import select
 
 from sales.api.schema import (
     BaseSaleSchema,
     SaleSchema,
 )
-from sales.api.middleware import format_http_error
 from sales.db.schema import sale_table, sale_item_table
 from sales.utils.pg import MAX_QUERY_ARGS, SelectQuery
 
@@ -16,8 +15,6 @@ from .base import BaseSaleView
 
 class SaleView(BaseSaleView):
     URL_PATH = r"/sales/{sale_id:\d+}"
-
-    MAX_SALES_PER_INSERT = MAX_QUERY_ARGS // len(sale_table.columns)
 
     @property
     def sale_id(self) -> int:

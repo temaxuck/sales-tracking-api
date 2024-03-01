@@ -8,6 +8,8 @@ from aiopg.sa import SAConnection
 from aiopg.sa.result import RowProxy
 from datetime import date, datetime
 from decimal import Decimal
+from sqlalchemy.sql import Select
+from sqlalchemy import and_
 
 from sales.db.schema import product_table, sale_table, sale_item_table
 from sales.api.middleware import format_http_error
@@ -35,8 +37,45 @@ class BaseView(web.View):
 
         return row
 
+    @classmethod
+    def convert_client_date(self, date: date) -> datetime:
+        try:
+            return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            raise format_http_error(
+                web.HTTPBadRequest,
+                "specified date parameter is not a valid date",
+            )
+
 
 class BaseSaleView(BaseView):
+
+    def filter_select_query_by_date(
+        self,
+        start_date: str,
+        end_date: str,
+        query: Select,
+    ) -> Select:
+        if end_date and not start_date:
+            raise format_http_error(
+                web.HTTPBadRequest,
+                "end_date parameter is specified but start_date is not.",
+            )
+
+        if start_date:
+            start_date = self.convert_client_date(start_date)
+            if end_date:
+                end_date = self.convert_client_date(end_date)
+                query = query.where(
+                    and_(
+                        sale_table.c.date >= start_date,
+                        sale_table.c.date <= end_date,
+                    )
+                )
+            else:
+                query = query.where(sale_table.c.date >= start_date)
+
+        return query
 
     async def check_if_sale_exists(self, sale_id: int) -> None:
         async with self.pg.acquire() as conn:
@@ -56,16 +95,6 @@ class BaseSaleView(BaseView):
             raise web.HTTPNotFound
 
         return product
-
-    @classmethod
-    def convert_client_date(self, date: date) -> datetime:
-        try:
-            return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
-        except ValueError:
-            raise format_http_error(
-                web.HTTPBadRequest,
-                "specified date parameter is not a valid date",
-            )
 
     async def update_sale(self, data: dict, sale_id: int) -> int:
         amount = 0
