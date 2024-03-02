@@ -14,6 +14,7 @@ from yarl import URL
 from sales.api.routes import (
     ProductsView,
     SalesView,
+    SaleView,
 )
 from sales.api.schema import (
     ProductsResponseSchema,
@@ -251,3 +252,23 @@ async def get_sales_data(
         errors = GetSalesResponseSchema().validate(data)
         assert errors == {}
         return data["sales"]
+
+
+async def get_sale_data(
+    client: TestClient,
+    sale_id: int,
+    expected_status: Union[int, EnumMeta] = HTTPStatus.OK,
+    **request_kwargs,
+) -> RecordType:
+    response = await client.get(
+        url_for(SaleView.URL_PATH, sale_id=sale_id),
+        **request_kwargs,
+    )
+
+    assert response.status == expected_status
+
+    if response.status == HTTPStatus.OK:
+        data = await response.json()
+        errors = SaleSchema().validate(data)
+        assert errors == {}
+        return data
