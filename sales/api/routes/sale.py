@@ -8,7 +8,7 @@ from sales.api.schema import (
     SaleSchema,
 )
 from sales.db.schema import sale_table, sale_item_table
-from sales.utils.pg import MAX_QUERY_ARGS, SelectQuery
+from sales.utils.pg import SelectQuery
 
 from .base import BaseSaleView
 

@@ -116,12 +116,8 @@ async def test_invalid_date_format(api_client, migrated_postgres_connection):
 
 @pytest.mark.asyncio
 async def test_non_existent_product_id(api_client, migrated_postgres_connection):
-    products = [generate_product(price=100)]
-    import_products(migrated_postgres_connection, products)
-    actual_products = await get_products_data(api_client)
-
     items = [
         {"product_id": 999, "quantity": 1},
     ]
 
-    sale = await post_sales_data(api_client, random_date(), items, HTTPStatus.NOT_FOUND)
+    await post_sales_data(api_client, random_date(), items, HTTPStatus.NOT_FOUND)

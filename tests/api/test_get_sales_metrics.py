@@ -11,7 +11,6 @@ from sales.db.schema import (
 from sales.utils.testing import (
     RecordType,
     generate_product,
-    compare_sales,
     get_sales_metrics_data,
     post_sales_data,
     get_products_data,

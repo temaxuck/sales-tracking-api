@@ -1,4 +1,3 @@
-from aiohttp.typedefs import StrOrURL
 from aiohttp.web_urldispatcher import DynamicResource
 from aiohttp.test_utils import TestClient
 from datetime import date as datetime_date, datetime
@@ -6,8 +5,8 @@ from enum import EnumMeta
 from faker import Faker
 from faker_vehicle import VehicleProvider
 from http import HTTPStatus
-from random import randint, shuffle
-from typing import Optional, List, Dict, Any, Mapping, Iterable, Union
+from random import randint
+from typing import Optional, List, Dict, Any, Union
 
 from yarl import URL
 
@@ -74,7 +73,7 @@ def generate_products(
 ) -> List[RecordType]:
     f"""
     Generate list of products 
-    
+
     :param products_number: Number of products to generate
     :param price: Fixed price for all products. If not specified value in range {(MIN_PRICE, MAX_PRICE+1)} is chosen
     """
