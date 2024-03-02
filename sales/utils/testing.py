@@ -272,3 +272,26 @@ async def get_sale_data(
         errors = SaleSchema().validate(data)
         assert errors == {}
         return data
+
+
+async def put_sale_data(
+    client: TestClient,
+    sale_id: int,
+    new_date: str,
+    new_items: List[RecordType],
+    expected_status: Union[int, EnumMeta] = HTTPStatus.OK,
+    **request_kwargs,
+) -> RecordType:
+    response = await client.put(
+        url_for(SaleView.URL_PATH, sale_id=sale_id),
+        json={"date": new_date, "items": new_items},
+        **request_kwargs,
+    )
+
+    assert response.status == expected_status
+
+    if response.status == HTTPStatus.OK:
+        data = await response.json()
+        errors = SaleSchema().validate(data)
+        assert errors == {}
+        return data
