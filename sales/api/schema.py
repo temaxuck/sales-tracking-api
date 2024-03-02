@@ -1,4 +1,6 @@
-from marshmallow import Schema
+from datetime import date as datetime_date
+
+from marshmallow import Schema, validates, ValidationError
 from marshmallow.fields import Str, Int, Float, Date, Nested, Number, Dict
 from marshmallow.validate import Length, Range
 
@@ -9,14 +11,18 @@ class EmptyResponseSchema(Schema):
     pass
 
 
-class ProductSchema(Schema):
+class PostProductSchema(Schema):
     name = Str(validate=Length(min=1, max=256), required=True)
     price = Float(validate=Range(min=0), required=True)
 
 
+class ProductSchema(PostProductSchema):
+    product_id = Int(validate=Range(min=0), required=True)
+
+
 class ProductsSchema(Schema):
     products = Nested(
-        ProductSchema,
+        PostProductSchema,
         many=True,
         required=True,
         validate=Length(max=Config.MAX_PRODUCT_INSTANCES_WITHIN_IMPORT),
@@ -39,6 +45,11 @@ class SaleItemsSchema(Schema):
 class BaseSaleSchema(Schema):
     date = Date(format=Config.DATE_FORMAT, required=True)
     items = Nested(SaleItemsSchema, many=True, required=True)
+
+    @validates("date")
+    def validate_birth_date(self, value: datetime_date):
+        if value > datetime_date.today():
+            raise ValidationError("Birth date can't be in the future")
 
     # Not sure if I should validate it like this
     # @validates_schema

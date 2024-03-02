@@ -60,4 +60,4 @@ class ProductsView(BaseView):
                 for chunk in chunked_products_rows:
                     await conn.execute(insert(product_table).values(chunk))
 
-        return web.Response(status=HTTPStatus.CREATED)
+        return web.Response(status=HTTPStatus.CREATED, content_type="application/json")
