@@ -9,6 +9,7 @@ from http import HTTPStatus
 from random import randint, shuffle
 from typing import Optional, List, Dict, Any, Mapping, Iterable, Union
 
+from yarl import URL
 
 from sales.api.routes import (
     ProductsView,
@@ -17,6 +18,7 @@ from sales.api.routes import (
 from sales.api.schema import (
     ProductsResponseSchema,
     SaleSchema,
+    GetSalesResponseSchema,
 )
 from sales.config import TestConfig
 
@@ -144,6 +146,17 @@ def compare_products(
     return True
 
 
+def compare_sales(
+    expected_sales: List[RecordType],
+    actual_sales: List[RecordType],
+) -> bool:
+    for a, b in zip(expected_sales, actual_sales):
+        if a["date"] != b["date"] or a["items"] != b["items"]:
+            return False
+
+    return True
+
+
 async def post_products_data(
     client: TestClient,
     products: List[RecordType],
@@ -201,3 +214,40 @@ async def post_sales_data(
         errors = SaleSchema().validate(data)
         assert errors == {}
         return data
+
+
+async def get_sales_data(
+    client: TestClient,
+    start_date: str = None,
+    end_date: str = None,
+    expected_status: Union[int, EnumMeta] = HTTPStatus.OK,
+    **request_kwargs,
+) -> RecordType:
+    """
+    BUG: without below call server responds with 500 Internal error.
+    """
+    response = await client.get(
+        ProductsView.URL_PATH,
+        **request_kwargs,
+    )
+
+    params = {}
+
+    if start_date:
+        params.update({"start_date": start_date})
+
+    if end_date:
+        params.update({"end_date": end_date})
+
+    response = await client.get(
+        URL(SalesView.URL_PATH) % params,
+        **request_kwargs,
+    )
+
+    assert response.status == expected_status
+
+    if response.status == HTTPStatus.OK:
+        data = await response.json()
+        errors = GetSalesResponseSchema().validate(data)
+        assert errors == {}
+        return data["sales"]

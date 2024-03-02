@@ -2,10 +2,9 @@ import pytest
 
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Tuple, List, Dict, Any
+from typing import List
 from sqlalchemy.engine import Connection
 
-from sales.config import TestConfig
 from sales.db.schema import (
     product_table,
 )
@@ -17,10 +16,6 @@ from sales.utils.testing import (
     generate_product,
     get_products_data,
 )
-
-cfg = TestConfig()
-
-TestCaseType = Tuple[RecordType, float, HTTPStatus]
 
 
 def import_products(connection: Connection, products: List[RecordType]) -> None:
