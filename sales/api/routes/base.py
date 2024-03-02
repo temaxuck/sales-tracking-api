@@ -100,6 +100,11 @@ class BaseSaleView(BaseView):
         amount = 0
         async with self.pg.acquire() as conn:
             async with conn.begin() as _:
+
+                # set advisory lock for the transaction isolation
+                # so another transaction would wait until this transaction proceeds
+                await conn.execute("SELECT pg_advisory_xact_lock(%s)", (sale_id,))
+
                 query = sale_item_table.delete().where(
                     sale_item_table.c.sale_id == sale_id
                 )
