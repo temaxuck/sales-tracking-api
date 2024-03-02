@@ -5,7 +5,7 @@ from sqlalchemy import select
 
 from sales.api.schema import (
     BaseSaleSchema,
-    GetSaleResponseSchema,
+    GetSalesResponseSchema,
     SaleSchema,
 )
 from sales.db.schema import sale_table, sale_item_table
@@ -18,7 +18,7 @@ class SalesView(BaseSaleView):
     URL_PATH = r"/sales"
 
     @docs(summary="Get a list of all sales")
-    @response_schema(GetSaleResponseSchema(), code=HTTPStatus.OK.value)
+    @response_schema(GetSalesResponseSchema(), code=HTTPStatus.OK.value)
     async def get(self):
         params = self.request.rel_url.query
         start_date, end_date = (

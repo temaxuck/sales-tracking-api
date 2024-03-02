@@ -69,7 +69,7 @@ class SaleSchema(BaseSaleSchema):
     amount = Float(validate=Range(min=0), required=True)
 
 
-class GetSaleResponseSchema(Schema):
+class GetSalesResponseSchema(Schema):
     sales = Nested(SaleSchema, many=True, required=True)
 
 
