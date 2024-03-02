@@ -6,7 +6,7 @@ from aiohttp import web
 from aiopg import Pool
 from aiopg.sa import SAConnection
 from aiopg.sa.result import RowProxy
-from datetime import date, datetime
+from datetime import date as datetime_date, datetime
 from decimal import Decimal
 from sqlalchemy.sql import Select
 from sqlalchemy import and_
@@ -30,7 +30,7 @@ class BaseView(web.View):
         row = dict(row)
 
         for k, v in row.items():
-            if isinstance(v, date):
+            if isinstance(v, datetime_date):
                 row[k] = v.strftime(self.app["config"].DATE_FORMAT)
             if isinstance(v, Decimal):
                 row[k] = float(v)
@@ -38,7 +38,7 @@ class BaseView(web.View):
         return row
 
     @classmethod
-    def convert_client_date(self, date: date) -> datetime:
+    def convert_client_date(self, date: str) -> str:
         try:
             return datetime.strptime(date, "%d.%m.%Y").strftime("%Y-%m-%d")
         except ValueError:

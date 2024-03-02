@@ -91,4 +91,6 @@ class SalesView(BaseSaleView):
 
         sale = await self.update_sale(data, sale_id)
 
-        return web.json_response(data=self.serialize_row(sale))
+        return web.json_response(
+            data=self.serialize_row(sale), status=HTTPStatus.CREATED.value
+        )

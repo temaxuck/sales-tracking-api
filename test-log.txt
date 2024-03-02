@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-8.0.0, pluggy-1.4.0
+rootdir: /home/creep/PetProjects/sales-tracking-api
+configfile: pytest.ini
+plugins: aiohttp-1.0.5, devtools-0.12.2, cov-4.1.0, alembic-0.10.7, pylama-8.4.1, Faker-23.1.0, anyio-4.3.0, asyncio-0.23.5
+asyncio: mode=auto
+collected 20 items
+
+tests/api/test_get_products.py ..                                        [ 10%]
+tests/api/test_post_products.py .........                                [ 55%]
+tests/api/test_post_sales.py .......                                     [ 90%]
+tests/migrations/test_stairway.py ..                                     [100%]
+
+============================== 20 passed in 5.92s ==============================

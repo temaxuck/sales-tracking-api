@@ -39,7 +39,7 @@ class ProductsResponseSchema(Schema):
 
 class SaleItemsSchema(Schema):
     product_id = Int(validate=Range(min=0), required=True)
-    quantity = Number(validate=Range(min=0), requred=True)
+    quantity = Number(validate=Range(min=0, min_inclusive=False), requred=True)
 
 
 class BaseSaleSchema(Schema):

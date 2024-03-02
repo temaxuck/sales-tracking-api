@@ -10,10 +10,13 @@ from random import randint, shuffle
 from typing import Optional, List, Dict, Any, Mapping, Iterable, Union
 
 
-from sales.api.routes import ProductsView
+from sales.api.routes import (
+    ProductsView,
+    SalesView,
+)
 from sales.api.schema import (
     ProductsResponseSchema,
-    EmptyResponseSchema,
+    SaleSchema,
 )
 from sales.config import TestConfig
 
@@ -126,6 +129,10 @@ def generate_sale(
 #         products.append(generate_product(price=price))
 
 
+def random_date():
+    return datetime.strptime(fake.date(), "%Y-%m-%d").strftime("%d.%m.%Y")
+
+
 def compare_products(
     expected_products: List[RecordType],
     actual_products: List[RecordType],
@@ -169,3 +176,28 @@ async def get_products_data(
         errors = ProductsResponseSchema().validate(data)
         assert errors == {}
         return data["products"]
+
+
+async def post_sales_data(
+    client: TestClient,
+    date: datetime_date,
+    items: List[RecordType],
+    expected_status: Union[int, EnumMeta] = HTTPStatus.CREATED,
+    **request_kwargs,
+) -> RecordType:
+    response = await client.post(
+        SalesView.URL_PATH,
+        json={
+            "date": date,
+            "items": items,
+        },
+        **request_kwargs,
+    )
+
+    assert response.status == expected_status
+
+    if response.status == HTTPStatus.CREATED:
+        data = await response.json()
+        errors = SaleSchema().validate(data)
+        assert errors == {}
+        return data
