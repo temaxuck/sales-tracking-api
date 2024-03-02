@@ -1,13 +1,7 @@
 import pytest
-import pytz
 
-from copy import copy
-from datetime import datetime, timedelta
 from http import HTTPStatus
-from numbers import Number
-from typing import Union, Tuple, Mapping, List
-from random import randint
-from unittest.mock import patch
+from typing import Tuple, List
 
 from sales.config import TestConfig
 from sales.utils.testing import (
