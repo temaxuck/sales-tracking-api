@@ -57,23 +57,23 @@ class BaseSaleView(BaseView):
         query: Select,
     ) -> Select:
         if end_date and not start_date:
-            raise format_http_error(
-                web.HTTPBadRequest,
-                "end_date parameter is specified but start_date is not.",
+            end_date = self.convert_client_date(end_date)
+            query = query.where(
+                sale_table.c.date <= end_date,
             )
-
-        if start_date:
-            start_date = self.convert_client_date(start_date)
-            if end_date:
-                end_date = self.convert_client_date(end_date)
-                query = query.where(
-                    and_(
-                        sale_table.c.date >= start_date,
-                        sale_table.c.date <= end_date,
+        else:
+            if start_date:
+                start_date = self.convert_client_date(start_date)
+                if end_date:
+                    end_date = self.convert_client_date(end_date)
+                    query = query.where(
+                        and_(
+                            sale_table.c.date >= start_date,
+                            sale_table.c.date <= end_date,
+                        )
                     )
-                )
-            else:
-                query = query.where(sale_table.c.date >= start_date)
+                else:
+                    query = query.where(sale_table.c.date >= start_date)
 
         return query
 
