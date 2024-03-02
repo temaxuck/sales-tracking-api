@@ -15,11 +15,13 @@ from sales.api.routes import (
     ProductsView,
     SalesView,
     SaleView,
+    MetricsView,
 )
 from sales.api.schema import (
     ProductsResponseSchema,
     SaleSchema,
     GetSalesResponseSchema,
+    MetricsSchema,
 )
 from sales.config import TestConfig
 
@@ -293,5 +295,34 @@ async def put_sale_data(
     if response.status == HTTPStatus.OK:
         data = await response.json()
         errors = SaleSchema().validate(data)
+        assert errors == {}
+        return data
+
+
+async def get_sales_metrics_data(
+    client: TestClient,
+    start_date: str = None,
+    end_date: str = None,
+    expected_status: Union[int, EnumMeta] = HTTPStatus.OK,
+    **request_kwargs,
+) -> RecordType:
+    params = {}
+
+    if start_date:
+        params.update({"start_date": start_date})
+
+    if end_date:
+        params.update({"end_date": end_date})
+
+    response = await client.get(
+        URL(MetricsView.URL_PATH) % params,
+        **request_kwargs,
+    )
+
+    assert response.status == expected_status
+
+    if response.status == HTTPStatus.OK:
+        data = await response.json()
+        errors = MetricsSchema().validate(data)
         assert errors == {}
         return data

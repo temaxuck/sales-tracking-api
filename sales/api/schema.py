@@ -74,6 +74,6 @@ class GetSalesResponseSchema(Schema):
 
 
 class MetricsSchema(Schema):
-    total_sales = Float(validate=Range(min=0), required=True)
-    average_sales = Float(validate=Range(min=0), required=True)
+    total_sales = Float(validate=Range(min=0), required=True, allow_none=True)
+    average_sales = Float(validate=Range(min=0), required=True, allow_none=True)
     sales_trends = Dict(keys=Str(), values=Float(validate=Range(min=0)), required=True)
