@@ -1,7 +1,6 @@
 import pytest
 
 from aiohttp.test_utils import TestClient
-from datetime import datetime, timedelta
 from http import HTTPStatus
 from typing import List
 from sqlalchemy.engine import Connection
@@ -10,26 +9,13 @@ from sales.db.schema import (
     product_table,
 )
 from sales.utils.testing import (
-    MAX_INTEGER,
     RecordType,
-    random_date,
     generate_product,
     compare_sales,
     get_sales_data,
     post_sales_data,
     get_products_data,
 )
-
-"""
-Positive:
-    - standard query
-    - only start_date
-    - only end_date
-    - both start_date and end_date
-    - no sales in database
-Negative:
-    - start_date is wrong format
-"""
 
 
 def import_products(connection: Connection, products: List[RecordType]) -> None:
